@@ -1,17 +1,23 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Badge } from "reactstrap";
+import { Badge,Button } from "reactstrap";
 import { bindActionCreators } from "redux";
 import * as productActions from "../../redux/action/productActions";
 import { Table } from "reactstrap";
+import * as cartActionss from "../../redux/action/cartActions";
+import alertify from "alertifyjs";
 class ProductList extends Component {
   componentDidMount() {
     this.props.actions.getProducts();
   }
+  addToCart = (product) =>{
+    this.props.actions.addToCart({quantity:1,product})
+    alertify.success(product.productName  + "added to cart")
+  }
   render() {
     return (
       <div>
-        <h3>
+        
           <Badge color="warning">Product</Badge>
           <Badge color="success">
             {this.props.currentCategory.categoryName}
@@ -24,6 +30,7 @@ class ProductList extends Component {
                 <th>Unit Price</th>
                 <th>Quantity Per Unit</th>
                 <th>Units in Stock</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -34,11 +41,17 @@ class ProductList extends Component {
                   <td>{product.unitPrice}</td>
                   <td>{product.quantityPerUnit}</td>
                   <td>{product.unitsInStock}</td>
+                  <td>
+                    <Button color="success" onClick={()=>this.addToCart(product)}>
+
+                      Sepete Ekle
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </Table>
-        </h3>
+        
       </div>
     );
   }
@@ -55,6 +68,7 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: {
       getProducts: bindActionCreators(productActions.getProducts, dispatch), // aksiyonları proplara bağla
+      addToCart : bindActionCreators(cartActionss.addToCart, dispatch),
     },
   };
 }
